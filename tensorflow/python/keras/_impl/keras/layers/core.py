@@ -19,6 +19,7 @@ from __future__ import division
 from __future__ import print_function
 
 import copy
+import sys
 import types as python_types
 
 import numpy as np
@@ -689,6 +690,7 @@ class Lambda(Layer):
     return self.mask
 
   def get_config(self):
+    module = self.function.__module__
     if isinstance(self.function, python_types.LambdaType):
       function = generic_utils.func_dump(self.function)
       function_type = 'lambda'
@@ -708,6 +710,7 @@ class Lambda(Layer):
 
     config = {
         'function': function,
+        'module': module,
         'function_type': function_type,
         'output_shape': output_shape,
         'output_shape_type': output_shape_type,
@@ -720,8 +723,11 @@ class Lambda(Layer):
   def from_config(cls, config, custom_objects=None):
     config = config.copy()
     globs = globals()
+    module = config.pop('module', None)
+    if module:
+      globs.update(sys.modules[module].__dict__)
     if custom_objects:
-      globs = dict(list(globs.items()) + list(custom_objects.items()))
+      globs.update(custom_objects)
     function_type = config.pop('function_type')
     if function_type == 'function':
       # Simple lookup in custom objects
