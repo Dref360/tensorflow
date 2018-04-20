@@ -724,7 +724,7 @@ class Lambda(Layer):
     config = config.copy()
     globs = globals()
     module = config.pop('module', None)
-    if module:
+    if module in sys.modules:
       globs.update(sys.modules[module].__dict__)
     if custom_objects:
       globs.update(custom_objects)
