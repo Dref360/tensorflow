@@ -30,7 +30,6 @@ from tensorflow.python.estimator.inputs import numpy_io
 from tensorflow.python.framework import ops
 from tensorflow.python.framework import test_util
 from tensorflow.python.keras._impl import keras
-from tensorflow.python.keras._impl.keras import backend as K
 from tensorflow.python.keras._impl.keras import testing_utils
 from tensorflow.python.keras._impl.keras.applications import mobilenet
 from tensorflow.python.keras._impl.keras.optimizers import SGD
