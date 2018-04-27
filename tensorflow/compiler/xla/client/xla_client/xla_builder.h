@@ -53,14 +53,31 @@ class XlaBuilder;
 class XlaOp {
  public:
   XlaOp() : handle_(0), builder_(nullptr) {}
+  ~XlaOp() {}
 
   StatusOr<Shape> GetShape() const;
+
+  const XlaBuilder* builder() const { return builder_; }
+
+  bool operator==(const XlaOp& rhs) const {
+    return handle_ == rhs.handle_ && builder_ == rhs.builder_;
+  }
+
+  bool operator!=(const XlaOp& rhs) const {
+    return handle_ != rhs.handle_ || builder_ != rhs.builder_;
+  }
+
+  friend std::ostream& operator<<(std::ostream& out, const XlaOp& op) {
+    out << op.handle();
+    return out;
+  }
 
  private:
   XlaOp(int64 handle, XlaBuilder* builder)
       : handle_(handle), builder_(builder) {}
 
   int64 handle() const { return handle_; }
+
   friend class XlaBuilder;
 
   int64 handle_;
@@ -569,6 +586,9 @@ class XlaBuilder {
 
   // Enqueues a sign instruction onto the computation.
   XlaOp Sign(const XlaOp& operand);
+
+  // Enqueues a count leading zeros instruction onto the computation.
+  XlaOp Clz(const XlaOp& operand);
 
   // Enqueues a cosine instruction onto the computation.
   XlaOp Cos(const XlaOp& operand);

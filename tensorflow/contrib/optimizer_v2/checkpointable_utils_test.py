@@ -456,7 +456,7 @@ class CheckpointingTests(test.TestCase):
         optimizer.apply_gradients(
             [(g, v) for g, v in zip(grad, model.vars)])
 
-  @test_util.run_in_graph_and_eager_modes(assert_no_eager_garbage=True)
+  @test_util.run_in_graph_and_eager_modes()
   def testDeferredSlotRestoration(self):
     checkpoint_directory = self.get_temp_dir()
 
@@ -702,8 +702,7 @@ class CheckpointCompatibilityTests(test.TestCase):
       with save_graph.as_default(), self.test_session(
           graph=save_graph) as session:
         root = self._initialized_model()
-        object_saver = checkpointable_utils.CheckpointableSaver(root)
-        save_path = object_saver.save(
+        save_path = root.save(
             session=session, file_prefix=checkpoint_prefix)
     with context.eager_mode():
       root = self._initialized_model()
@@ -716,8 +715,7 @@ class CheckpointCompatibilityTests(test.TestCase):
     checkpoint_prefix = os.path.join(checkpoint_directory, "ckpt")
     with context.eager_mode():
       root = self._initialized_model()
-      object_saver = checkpointable_utils.CheckpointableSaver(root)
-      save_path = object_saver.save(file_prefix=checkpoint_prefix)
+      save_path = root.save(file_prefix=checkpoint_prefix)
     with context.graph_mode():
       save_graph = ops.Graph()
       with save_graph.as_default(), self.test_session(
