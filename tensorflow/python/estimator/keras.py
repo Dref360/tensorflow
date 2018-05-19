@@ -338,6 +338,11 @@ def _create_keras_model_fn(keras_model, custom_objects=None):
 
   def model_fn(features, labels, mode):
     """model_fn for keras Estimator."""
+
+    # Clear graphs before doing anything.
+    # Cannot call K.clear_session because the graph is read_only.
+    K._GRAPH_LEARNING_PHASES = {}
+    K._GRAPH_UID_DICTS = {}
     model = _clone_and_build_model(mode, keras_model, custom_objects, features,
                                    labels)
     # Get inputs to EstimatorSpec
